@@ -23,7 +23,9 @@ defmodule Derivative do
     #ln(x)
     #test = {:sub, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:mul, {:num, 3}, {:var, :x}}}
     #4x^2 - 3x
-    expression = {:sqrt, {:var, :x}}
+    #expression = {:sqrt, {:var, :x}}
+    #sqrt(x)
+    expression = {:mul, {:exp, {:num, 2}, {:num, 2}}, {:var, :x}}
     derived = derive(expression, :x)
     simplifyed = simplify(derived)
 
@@ -79,6 +81,7 @@ defmodule Derivative do
 
   def simplify_exp(_,{:num, 0}) do  1 end  
   def simplify_exp(e1,{:num, 1}) do  e1 end
+  def simplify_exp({:num, n1},{:num, n2}) do {:num, :math.pow(n1,n2)} end
   def simplify_exp(e1,e2) do {:exp, e1, e2} end
 
   def print({:num, n}) do "#{n}" end
