@@ -15,17 +15,18 @@ defmodule Derivative do
   @spec derive(expr(), atom()) :: expr()
 
   def test() do
-    #test = {:add, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}}
+    #expression = {:add, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}}
     # 4x^2 + 3x + 42
-    #test = {:add, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:ln,{:var, :x}}}
+    #expression = {:add, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:ln,{:var, :x}}}
     #4x^2 + ln(x)
     #expression = {:ln,{:var, :x}}
     #ln(x)
-    #test = {:sub, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:mul, {:num, 3}, {:var, :x}}}
+    #expression = {:sub, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:mul, {:num, 3}, {:var, :x}}}
     #4x^2 - 3x
     #expression = {:sqrt, {:var, :x}}
     #sqrt(x)
-    expression = {:mul, {:exp, {:num, 2}, {:num, 2}}, {:var, :x}}
+    #expression = {:mul, {:exp, {:num, 2}, {:num, 2}}, {:var, :x}}
+    expression = {:div, {:num, 2}, {:var, :x}}
     derived = derive(expression, :x)
     simplifyed = simplify(derived)
 
@@ -43,6 +44,7 @@ defmodule Derivative do
   def derive({:sub, e1, e2}, v) do {:sub, derive(e1, v), derive(e2, v)} end
   def derive({:ln, v}, _) do {:div, {:num, 1}, v} end
   def derive({:sqrt, v}, _) do {:div, {:num, 1}, {:mul, {:num, 2}, {:sqrt, v}}} end
+  def derive({:div, {:num, n}, v}, _) do {:mul, {:num, -1}, {:div, {:num, n}, {:exp, v, {:num, 2}}}} end
 
   def simplify({:num, n}) do {:num, n} end
   def simplify({:var, v}) do {:var, v} end
@@ -81,7 +83,7 @@ defmodule Derivative do
 
   def simplify_exp(_,{:num, 0}) do  1 end  
   def simplify_exp(e1,{:num, 1}) do  e1 end
-  def simplify_exp({:num, n1},{:num, n2}) do {:num, :math.pow(n1,n2)} end
+  def simplify_exp({:num, n1},{:num, n2}) do {:num, :math.pow(n1,n2) |> round} end
   def simplify_exp(e1,e2) do {:exp, e1, e2} end
 
   def print({:num, n}) do "#{n}" end
@@ -90,7 +92,7 @@ defmodule Derivative do
   def print({:sub, e1, e2}) do "#{print(e1)} - #{print(e2)}" end
   def print({:mul, e1, e2}) do "(#{print(e1)} * #{print(e2)})" end  
   def print({:exp, e1, e2}) do "#{print(e1)}^#{print(e2)}" end
-  def print({:div, e1, e2}) do "#{print(e1)} / #{print(e2)}" end
+  def print({:div, e1, e2}) do "(#{print(e1)} / #{print(e2)})" end
   def print({:ln, e}) do "ln(#{print(e)})" end
   def print({:sqrt, e}) do "√(#{print(e)})" end
 
