@@ -1,38 +1,32 @@
 defmodule Derivative do
 
-  @type literal() ::  {:num, number()}  | {:var, atom()}
-  @type expr() :: {:exp, literal(), {:num, number()}}
+  @type expr() :: {:num, number()}  | {:var, atom()}
   | {:add, expr(), expr()}
   | {:mul, expr(), expr()}
   | {:sub, expr(), expr()}
   | {:div, expr(), expr()}
+  | {:exp, {:var, atom()}, {:num, number()}}
   | {:ln, expr()}
   | {:sqrt, expr()}
   | {:sin, expr()}
   | {:cos, expr()}
-  | literal()
   
   @spec derive(expr(), atom()) :: expr()
 
   def test() do
-    #expression = {:add, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}}
-    # 4x^2 + 3x + 42
     #expression = {:add, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:ln,{:var, :x}}}
-    #4x^2 + ln(x)
     #expression = {:ln,{:var, :x}}
-    #ln(x)
     #expression = {:sub, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}, {:mul, {:num, 3}, {:var, :x}}}
-    #4x^2 - 3x
     #expression = {:sqrt, {:var, :x}}
-    #sqrt(x)
     #expression = {:mul, {:exp, {:num, 2}, {:num, 2}}, {:var, :x}}
-    expression = {:div, {:num, 2}, {:var, :x}}
+    #expression = {:div, {:num, 2}, {:var, :x}}
+    expression = {:sin, {:var, :x}}
     derived = derive(expression, :x)
-    simplifyed = simplify(derived)
+    simplified = simplify(derived)
 
     IO.write("expression: #{print(expression)}\n")
     IO.write("derivative: #{print(derived)}\n")
-    IO.write("simplified: #{print(simplifyed)}\n")
+    IO.write("simplified: #{print(simplified)}\n")
   end
 
   def derive({:num, _}, _) do {:num, 0} end
@@ -45,6 +39,7 @@ defmodule Derivative do
   def derive({:ln, v}, _) do {:div, {:num, 1}, v} end
   def derive({:sqrt, v}, _) do {:div, {:num, 1}, {:mul, {:num, 2}, {:sqrt, v}}} end
   def derive({:div, {:num, n}, v}, _) do {:mul, {:num, -1}, {:div, {:num, n}, {:exp, v, {:num, 2}}}} end
+  def derive({:sin, e}, _) do {:cos, e} end
 
   def simplify({:num, n}) do {:num, n} end
   def simplify({:var, v}) do {:var, v} end
@@ -55,6 +50,8 @@ defmodule Derivative do
   def simplify({:ln, e}) do {:ln, e} end
   def simplify({:div, e1, e2}) do {:div, simplify(e1), simplify(e2)} end
   def simplify({:sqrt, e}) do {:sqrt, e} end
+  def simplify({:sin, e}) do {:sin, simplify(e)} end
+  def simplify({:cos, e}) do {:cos, simplify(e)} end
 
   def simplify_add({:num, 0}, e2) do e2 end  
   def simplify_add({:num, n1}, {:num, n2}) do {:num, n1+n2} end
@@ -95,7 +92,7 @@ defmodule Derivative do
   def print({:div, e1, e2}) do "(#{print(e1)} / #{print(e2)})" end
   def print({:ln, e}) do "ln(#{print(e)})" end
   def print({:sqrt, e}) do "√(#{print(e)})" end
+  def print({:sin, e}) do "sin(#{print(e)})" end
+  def print({:cos, e}) do "cos(#{print(e)})" end
 
 end
-
-Derivative.test()
