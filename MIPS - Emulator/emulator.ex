@@ -7,7 +7,7 @@ defmodule Emulator do
     run(0, code, reg, data, out)
   end
 
-  def run(pc, code, reg, mem, out) do
+  def run(pc, code, reg, data, out) do
     next = Program.read_instruction(code, pc)
     case next do
 
@@ -16,28 +16,33 @@ defmodule Emulator do
 
     {:out, rs} ->
 	  	pc = pc + 4
-	    a = Register.read(reg, rs)
-	    run(pc, code, reg, mem, out)
+	    s = Register.read(reg, rs)
+		out = Out.put(out, s)
+	    run(pc, code, reg, data, out)
 	
     {:add, rd, rs, rt} ->
 	  	pc = pc + 4
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    reg = Register.write(reg, rd, s + t)
-	    run(pc, code, reg, mem, out)
+	    run(pc, code, reg, data, out)
 
     {:sub, rd, rs, rt} ->
 	  	pc = pc + 4
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    reg = Register.write(reg, rd, s - t)
-	    run(pc, code, mem, reg, out)
+	    run(pc, code, data, reg, out)
 
     {:addi, rd, rs, imm} ->
 	  	pc = pc + 4
+		IO.write("#{pc} : addi, #{rd}, #{rs}, #{imm}")
 	    s = Register.read(reg, rs)
 	    reg = Register.write(reg, rd, s + imm)
-	    run(pc, code, mem, reg, out)
+	    run(pc, code, data, reg, out)
+
+	{:lable, :loop} ->
+		run(pc, code, data, reg, out)
 
     {:beq, rs, rt, imm} ->
 		pc = pc + 4
@@ -48,7 +53,7 @@ defmodule Emulator do
 			else 
 				pc 
 			end
-	    run(pc, code, mem, reg, out)
+	    run(pc, code, data, reg, out)
 
     {:bne, rs, rt, imm} ->
 	  	pc = pc + 4
@@ -59,23 +64,23 @@ defmodule Emulator do
 			else 
 				pc 
 			end
-	    run(pc, code, mem, reg, out)
+	    run(pc, code, data, reg, out)
 
     {:lw, rd, rs, imm} ->
 	  	pc = pc + 4
 	    s = Register.read(reg, rs)	
 	    addr = s + imm
-	    val = Memory.read(mem, addr)
+	    val = Program.read_data(data, addr) # read data from address
 	    reg = Register.write(reg, rd, val)
-	    run(pc, code, mem, reg, out)
+	    run(pc, code, data, reg, out)
       
     {:sw, rs, rt, imm} ->
 	  	pc = pc + 4
 	    vs = Register.read(reg, rs)
 	    vt = Register.read(reg, rt)	
 	    addr = vt + imm
-	    mem = Memory.write(mem, addr, vs)
-	    run(pc, code, mem, reg, out)
+	    data = Program.write_data(data, addr, vs) # write and read from address
+	    run(pc, code, data, reg, out)
     end
   end
 

@@ -12,5 +12,6 @@ defmodule Test do
             :halt]                  # stop
     Emulator.run(prgm)
   end
-
 end
+
+Test.test()

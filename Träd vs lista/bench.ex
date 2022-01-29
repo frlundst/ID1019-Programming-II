@@ -40,7 +40,7 @@ defmodule Bench do
                 if e < head do
                     [e | l]
                 else
-                    [head | list_insert(e, tail)] # recurively sorts to the right spot 
+                    [head | list_insert(e, tail)] # recursively sorts to the right spot 
                 end
         end
     end
