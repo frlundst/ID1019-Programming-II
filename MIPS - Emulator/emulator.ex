@@ -41,7 +41,8 @@ defmodule Emulator do
 	    reg = Register.write(reg, rd, s + imm)
 	    run(pc, code, data, reg, out)
 
-	{:lable, :loop} ->
+	{:label, name} ->
+		#läs av program counter (pc) för den platsen och sätt pc till det
 		run(pc, code, data, reg, out)
 
     {:beq, rs, rt, imm} ->
