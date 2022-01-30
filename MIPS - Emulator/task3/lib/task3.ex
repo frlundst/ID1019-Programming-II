@@ -1,6 +1,6 @@
-defmodule Test do
-
+defmodule Task3 do
   def test() do
+    IO.write("PROGRAM STARTING\n")
     prgm = [{:addi, 1, 0, 5},       # $1 <- 5
             {:lw, 2, 0, :arg},      # $2 <- data[:arg]
             {:add, 4, 2, 1},        # $4 <- $2 + $1
@@ -10,8 +10,7 @@ defmodule Test do
             {:out, 4},              # out $4
             {:bne, 4, 0, :loop},    # branch to loop if not equal
             :halt]                  # stop
-    Emulator.run(prgm)
+      Emulator.run(prgm)
   end
 end
 
-Test.test()

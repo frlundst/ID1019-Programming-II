@@ -11,9 +11,9 @@ defmodule Emulator do
     next = Program.read_instruction(code, pc)
     case next do
 
-    {:halt} ->
-	    Out.close(out)
-
+    :halt ->
+	    #Out.close(out)
+		data
     {:out, rs} ->
 	  	pc = pc + 4
 	    s = Register.read(reg, rs)
@@ -22,6 +22,7 @@ defmodule Emulator do
 	
     {:add, rd, rs, rt} ->
 	  	pc = pc + 4
+		IO.write("#{pc} : add, #{rd}, #{rs}, #{rt}\n")
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    reg = Register.write(reg, rd, s + t)
@@ -29,24 +30,27 @@ defmodule Emulator do
 
     {:sub, rd, rs, rt} ->
 	  	pc = pc + 4
+		IO.write("#{pc} : sub, #{rd}, #{rs}, #{rt}\n")
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    reg = Register.write(reg, rd, s - t)
-	    run(pc, code, data, reg, out)
+	    run(pc, code, reg, data, out)
 
     {:addi, rd, rs, imm} ->
 	  	pc = pc + 4
-		IO.write("#{pc} : addi, #{rd}, #{rs}, #{imm}")
+		IO.write("#{pc} : addi, #{rd}, #{rs}, #{imm}\n")
 	    s = Register.read(reg, rs)
 	    reg = Register.write(reg, rd, s + imm)
-	    run(pc, code, data, reg, out)
+	    run(pc, code, reg, data, out)
 
 	{:label, name} ->
-		#läs av program counter (pc) för den platsen och sätt pc till det
-		run(pc, code, data, reg, out)
+		pc = pc + 4
+		data = Program.write_data(data, name, pc)
+		run(pc, code, reg, data, out)
 
     {:beq, rs, rt, imm} ->
 		pc = pc + 4
+		IO.write("#{pc} : beq, #{rs}, #{rt}, #{imm}\n")
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    pc = if s == t do 
@@ -54,26 +58,28 @@ defmodule Emulator do
 			else 
 				pc 
 			end
-	    run(pc, code, data, reg, out)
+	    run(pc, code, reg, data, out)
 
     {:bne, rs, rt, imm} ->
 	  	pc = pc + 4
+		IO.write("#{pc} : bne, #{rs}, #{rt}, #{imm}\n")
+		addr = Program.read_address(data, imm)
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    pc = if s != t do 
-				pc+imm 
+				pc+addr
 			else 
 				pc 
 			end
-	    run(pc, code, data, reg, out)
+	    run(pc, code, reg, data, out)
 
     {:lw, rd, rs, imm} ->
 	  	pc = pc + 4
-	    s = Register.read(reg, rs)	
-	    addr = s + imm
-	    val = Program.read_data(data, addr) # read data from address
-	    reg = Register.write(reg, rd, val)
-	    run(pc, code, data, reg, out)
+		IO.write("#{pc} : lw, #{rd}, #{rs}, #{imm}\n")
+	    s = Register.read(reg, rs)
+	    addr = Program.read_address(data, imm) + s
+	    reg = Register.write(reg, rd, addr)
+	    run(pc, code, reg, data, out)
       
     {:sw, rs, rt, imm} ->
 	  	pc = pc + 4
@@ -81,7 +87,7 @@ defmodule Emulator do
 	    vt = Register.read(reg, rt)	
 	    addr = vt + imm
 	    data = Program.write_data(data, addr, vs) # write and read from address
-	    run(pc, code, data, reg, out)
+	    run(pc, code, reg, data, out)
     end
   end
 
