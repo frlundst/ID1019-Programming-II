@@ -2,6 +2,7 @@ defmodule Emulator do
 
   def run(prgm) do
 	{code, data} = Program.load(prgm)
+	data = Tree.tree_insert(:arg, 12, data)
 	out = Out.new()
     reg = Register.new()
     run(0, code, reg, data, out)
@@ -11,9 +12,9 @@ defmodule Emulator do
     next = Program.read_instruction(code, pc)
     case next do
 
-    :halt ->
-	    #Out.close(out)
-		data
+    {:halt} ->
+	    Out.close(out)
+		#{reg, data}
     {:out, rs} ->
 	  	pc = pc + 4
 	    s = Register.read(reg, rs)
@@ -45,16 +46,17 @@ defmodule Emulator do
 
 	{:label, name} ->
 		pc = pc + 4
-		data = Program.write_data(data, name, pc)
+		data = Tree.tree_insert(name, pc, data)
 		run(pc, code, reg, data, out)
 
     {:beq, rs, rt, imm} ->
 		pc = pc + 4
 		IO.write("#{pc} : beq, #{rs}, #{rt}, #{imm}\n")
+		addr = Program.read_address(data, imm)
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    pc = if s == t do 
-				pc+imm 
+				addr
 			else 
 				pc 
 			end
@@ -67,7 +69,7 @@ defmodule Emulator do
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    pc = if s != t do 
-				pc+addr
+				addr
 			else 
 				pc 
 			end
@@ -84,11 +86,10 @@ defmodule Emulator do
     {:sw, rs, rt, imm} ->
 	  	pc = pc + 4
 	    vs = Register.read(reg, rs)
-	    vt = Register.read(reg, rt)	
+	    vt = Register.read(reg, rt)
 	    addr = vt + imm
-	    data = Program.write_data(data, addr, vs) # write and read from address
+	    data = Program.write_data(data, addr, vs) # write
 	    run(pc, code, reg, data, out)
     end
   end
-
 end

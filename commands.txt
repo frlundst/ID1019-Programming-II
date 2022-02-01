@@ -1,0 +1,2 @@
+mix new namn
+iex -S mix (i project folder)

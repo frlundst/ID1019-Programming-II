@@ -8,11 +8,10 @@ defmodule Test do
             {:label, :loop},        # loop
             {:sub, 4, 4, 5},        # $4 <- $4 - $5
             {:out, 4},              # out $4
-            {:bne, 4, 0, :loop},    # branch to loop if not equal
-            :halt],                  # stop
-            [
-              [{:label, :arg}, {:word, 12}]
-            ]}
+            {:bne, 4, 4, :loop},    # branch to loop if not equal
+            {:halt}],                  # stop
+            Tree.tree_new()
+            }
     Emulator.run(prgm)
   end
 end
