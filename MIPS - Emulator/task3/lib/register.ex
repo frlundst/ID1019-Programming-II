@@ -1,5 +1,6 @@
 defmodule Register do
-    def new() do # register has 10 slots
+    # register has 32 slots
+    def new() do
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     end
 

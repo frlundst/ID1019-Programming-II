@@ -25,8 +25,6 @@ defmodule Tree do
         end
     end
 
-    def tree_insert(k, e, :nil) do {:leaf, k, e} end
-
     def tree_search(:nil, _) do 0 end
     def tree_search({:node, key, value, left, right}, key_to_find) do
         cond do
@@ -40,7 +38,7 @@ defmodule Tree do
         if(k == key_to_find) do
             e
         else
-            :nil
+            0
         end
     end
 end

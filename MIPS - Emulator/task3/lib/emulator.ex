@@ -52,11 +52,10 @@ defmodule Emulator do
     {:beq, rs, rt, imm} ->
 		pc = pc + 4
 		IO.write("#{pc} : beq, #{rs}, #{rt}, #{imm}\n")
-		addr = Program.read_address(data, imm)
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    pc = if s == t do 
-				addr
+				Program.read_address(data, imm)
 			else 
 				pc 
 			end
@@ -65,11 +64,11 @@ defmodule Emulator do
     {:bne, rs, rt, imm} ->
 	  	pc = pc + 4
 		IO.write("#{pc} : bne, #{rs}, #{rt}, #{imm}\n")
-		addr = Program.read_address(data, imm)
+		
 	    s = Register.read(reg, rs)
 	    t = Register.read(reg, rt)
 	    pc = if s != t do 
-				addr
+				Program.read_address(data, imm)
 			else 
 				pc 
 			end
@@ -88,7 +87,7 @@ defmodule Emulator do
 	    vs = Register.read(reg, rs)
 	    vt = Register.read(reg, rt)
 	    addr = vt + imm
-	    data = Program.write_data(data, addr, vs) # write
+	    data = Program.write_data(data, addr, vs)
 	    run(pc, code, reg, data, out)
     end
   end
