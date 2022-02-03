@@ -1,2 +1,4 @@
 mix new namn
 iex -S mix (i project folder)
+
+eval "$(homebrew/bin/brew shellenv)"
