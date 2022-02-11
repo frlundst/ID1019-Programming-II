@@ -61,21 +61,21 @@ defmodule Primtal do
         end
     end
 
-    def solution_two([], res) do res end
-    def solution_two([head | tail], res) do
-        if Enum.any?(res, fn(x) -> rem(head, x) == 0 end) do
-            solution_two(tail, res)
+    def solution_two([], found_primes) do found_primes end
+    def solution_two([head | tail], found_primes) do
+        if Enum.any?(found_primes, fn(x) -> rem(head, x) == 0 end) do
+            solution_two(tail, found_primes)
         else
-            solution_two(tail, res ++ [head])
+            solution_two(tail, found_primes ++ [head])
         end
     end
 
-    def solution_three([], res) do res end
-    def solution_three([head | tail], res) do
-        if Enum.any?(res, fn(x) -> rem(head, x) == 0 end) do
-            solution_two(tail, res)
+    def solution_three([], found_primes) do found_primes end
+    def solution_three([head | tail], found_primes) do
+        if Enum.any?(found_primes, fn(x) -> rem(head, x) == 0 end) do
+            solution_two(tail, found_primes)
         else
-            solution_two(tail, [head | res])
+            solution_two(tail, [head | found_primes])
         end
     end
 end
