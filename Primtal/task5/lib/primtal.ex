@@ -70,12 +70,12 @@ defmodule Primtal do
         end
     end
 
-    def solution_three([], found_primes) do found_primes end
+    def solution_three([], found_primes) do Enum.reverse(found_primes) end
     def solution_three([head | tail], found_primes) do
         if Enum.any?(found_primes, fn(x) -> rem(head, x) == 0 end) do
-            solution_two(tail, found_primes)
+            solution_three(tail, found_primes)
         else
-            solution_two(tail, [head | found_primes])
+            solution_three(tail, [head | found_primes])
         end
     end
 end
