@@ -50,6 +50,6 @@ end
 
 defmodule Test do
   def test() do
-    Enum.take( Stream.map(Primes.primes(), fn(x) -> x end), 100)
+    Enum.take( Stream.map(Primes.primes(), fn(x) -> x * 2 end), 100)
   end
 end
