@@ -18,10 +18,9 @@ defmodule Mandel do
 
   def row(0, _, _, _, row), do: row
   def row(width, height, trans, depth, row) do
-    complex = trans.(width, height)
-    calculation = Brot.mandelbrot(complex, depth)
-
-    color = Color.convert(calculation, depth)
-    row(width - 1, height, trans, depth, [color | row])
+    c = trans.(width, height)
+    i = Brot.mandelbrot(c, depth)
+    rgb = Color.convert(i, depth)
+    row(width - 1, height, trans, depth, [rgb | row])
   end
 end
