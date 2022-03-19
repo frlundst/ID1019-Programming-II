@@ -2,8 +2,9 @@ defmodule Morse do
     def test() do
         tree = morse()
         encodeTable = getEncodeTable(tree, [])
-        text = 'hej jag heter fredrik'
+        text = 'fredrik är mitt namn'
         morse = encode(text, encodeTable)
+        
         rickRoll = ".- .-.. .-.. ..-- -.-- --- ..- .-. ..-- -... .- ... . ..-- .- .-. . ..-- -... . .-.. --- -. --. ..-- - --- ..-- ..- ... .... - - .--. ... ---... .----- .----- .-- .--
 .-- .-.-.- -.-- --- ..- - ..- -... . .-.-.- -.-.
 --- -- .----- .-- .- - -.-. .... ..--.. ...- .----.
